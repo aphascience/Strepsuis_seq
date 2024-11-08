@@ -32,8 +32,9 @@ WORKDIR /home/tools
 
 ## install trimming tool (bbduk?)...
 RUN wget https://sourceforge.net/projects/bbmap/files/BBMap_39.11.tar.gz --no-check-certificate && \
-    tar -xvzf BBMap_39.11.tar.gz && rm -f BBMap_39.11.tar.gz && \
-    export PATH=$PWD/bbmap:$PATH
+    tar -xvzf BBMap_39.11.tar.gz && rm -f BBMap_39.11.tar.gz
+
+ENV PATH="$PATH:/home/tools/bbmap"
 
 ## install srst2 (need to update to py3...)
 
