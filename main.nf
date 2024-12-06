@@ -7,22 +7,30 @@ process trim {
     input:
         tuple val(pairId), path(raw1), path(raw2)
     output:
-        tuple val(pair_id), path("trimmed_R1.fastq.gz"), path("trimmed_R2.fastq")
+        tuple val(pairId), path("trimmed_R1.fastq.gz"), path("trimmed_R2.fastq")
     """
     trim.sh raw1 raw2 ${params.adapters}
     """
 }
 
 process bowtie_map {
-    
-    #'--very-sensitive-local',
-	#			'--no-unal',
-	#			'-a',					 # Search for and report all alignments
-	#			'-x', db_full_path
+    tag "pairId"
+    input:
+        tuple val(pairId), path("trimmed_R1.fastq.gz"), path("trimmed_R2.fastq")
+        path($projectDir/assets/Ss-recN)
+    output:
+        tuple val(pairId), path("map.sam")
+    """
+    bowtie_map.sh trimmed_R1.fastq.gz trimmed_R2.fastq.gz $projectDir/assets/Ss-recN
+    """
 }
 
 process pileup {
-
+    tag "pairId"
+    input:
+        tuple val(pairId), path("map.sam")
+    
+    
 }
 
 process srst2_recN {
@@ -41,7 +49,8 @@ tag { "recN_${pairId}" }
     mlstdef = params.mlst_db ? "--mlst_definitions $mlst_definitions" : ''
     mlstdelim = params.mlst_db ? "--mlst_delimiter $params.mlst_delimiter" : ''
     """
-    srst2 --input_pe $reads --output ${pairId}_recN --min_coverage $params.min_gene_cov --max_divergence $params.max_gene_divergence $mlstDB $mlstdef $mlstdelim $geneDB 
+    srst2 --input_pe $reads --output ${pairId}_recN --min_coverage $params.min_gene_cov \
+          --max_divergence $params.max_gene_divergence $mlstDB $mlstdef $mlstdelim $geneDB 
     """
 }
 
