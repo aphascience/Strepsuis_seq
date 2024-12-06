@@ -26,7 +26,7 @@ RUN apt-get update && apt-get install --yes --no-install-recommends \
     bowtie2 \
     samtools
 
-################## INSTALL DEPENDANCIES ###################
+################## INSTALL DEPENDENCIES ###################
 
 WORKDIR /home/tools
 
