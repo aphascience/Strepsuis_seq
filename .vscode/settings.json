@@ -1,5 +1,6 @@
 {
     "cSpell.words": [
+        "APHA's",
         "bbduk",
         "bbmap",
         "bowtie",
@@ -16,6 +17,7 @@
         "mlst",
         "mlstdef",
         "mlstdelim",
+        "mpileup",
         "mypy",
         "nosetests",
         "pipenv",
@@ -37,6 +39,7 @@
         "spyproject",
         "srst",
         "Strepsuis",
+        "suis",
         "unal",
         "venv",
         "webassets",
