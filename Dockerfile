@@ -38,7 +38,7 @@ RUN wget https://sourceforge.net/projects/bbmap/files/BBMap_39.11.tar.gz --no-ch
 
 ENV PATH="$PATH:/home/tools/bbmap"
 
-## install srst2 (need to update to py3...)
+## install srst2 (updated for python3 compatibility)
 RUN git clone https://github.com/APHA-CSU/srst2-py3.git && \
     cd srst2-py3 && \
     python3 setup.py
