@@ -15,9 +15,13 @@ RUN apt-get update && apt-get install --yes --no-install-recommends \
     bzip2 \
     gawk \
     gcc \
+    git \
     make \
     python3-dev \
     python3-pip \
+    python3-pandas \
+    python3-numpy \
+    python3-scipy \
     zlib1g-dev \
     libncurses-dev \
     liblzma-dev \
@@ -26,21 +30,19 @@ RUN apt-get update && apt-get install --yes --no-install-recommends \
     bowtie2 \
     samtools
 
-RUN  python -m pip install -r requirements.txt
-
 ################## INSTALL DEPENDENCIES ###################
 
 WORKDIR /home/tools
 
-## install trimming tool (bbduk?)...
+## install trimming tool
 RUN wget https://sourceforge.net/projects/bbmap/files/BBMap_39.11.tar.gz --no-check-certificate && \
     tar -xvzf BBMap_39.11.tar.gz && rm -f BBMap_39.11.tar.gz
 
 ENV PATH="$PATH:/home/tools/bbmap"
 
 ## install srst2 (updated for python3 compatibility)
-RUN git clone https://github.com/APHA-CSU/srst2-py3.git && \
-    cd srst2-py3 && \
-    python3 setup.py
+RUN git clone https://github.com/APHA-CSU/srst2-py3.git
+
+ENV PATH="$PATH:/home/tools/srst2-py3/scripts/"
 
 WORKDIR /home
