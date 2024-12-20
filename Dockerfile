@@ -26,6 +26,8 @@ RUN apt-get update && apt-get install --yes --no-install-recommends \
     bowtie2 \
     samtools
 
+RUN  python -m pip install -r requirements.txt
+
 ################## INSTALL DEPENDENCIES ###################
 
 WORKDIR /home/tools
@@ -37,5 +39,8 @@ RUN wget https://sourceforge.net/projects/bbmap/files/BBMap_39.11.tar.gz --no-ch
 ENV PATH="$PATH:/home/tools/bbmap"
 
 ## install srst2 (need to update to py3...)
+RUN git clone https://github.com/APHA-CSU/srst2-py3.git && \
+    cd srst2-py3 && \
+    python3 setup.py
 
 WORKDIR /home
