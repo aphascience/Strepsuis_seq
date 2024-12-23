@@ -130,15 +130,19 @@ workflow {
     srst2_serotype(trim.out)
     srst2_virulence(trim.out)
     srst2_recN.out.recN_genes
-        .collectFile( name: "recN_table.tsv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}")
+        .map { it[1] }
+        .collectFile( name: "recN_table.tsv", sort: true, keepHeader: true, storeDir: "${params.outdir}")
         .set { recN }
-    /*srst2_mlst.out
+    srst2_mlst.out
+        .map { it[1] }
         .collectFile(  name: "mlst_table.tsv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}")
         .set { mlst }
     srst2_serotype.out
+        .map { it[1] }
         .collectFile(  name: "serotype_table.tsv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}")
         .set { serotype }
     srst2_virulence.out
+        .map { it[1] }
         .collectFile(  name: "virulence_table.tsv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}")
         .set { virulence }
     /*combineoutputs(srst2_recN.out, srst2_mlst.out, srst2_serotype.out, srst2_virulence.out)
