@@ -16,12 +16,14 @@ RUN apt-get update && apt-get install --yes --no-install-recommends \
     gawk \
     gcc \
     git \
-    make \
+    make
+RUN apt-get install --yes --no-install-recommends \
     python3-dev \
     python3-pip \
     python3-pandas \
     python3-numpy \
-    python3-scipy \
+    python3-scipy
+RUN apt-get install --yes --no-install-recommends \
     zlib1g-dev \
     libncurses-dev \
     liblzma-dev \
