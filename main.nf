@@ -111,15 +111,15 @@ tag "combine"
     input:
         file("recN.tsv")
         file("MLST.tsv")
-        file("serotype_*.tsv")
-        file("virulence_*.tsv")
+        file("serotype.tsv")
+        file("virulence.tsv")
 
     output:
-        file("Ssuis_typing*.csv")
+        file("*.csv")
 
     script:
     """
-        python3 combine_outputs.py recN.tsv MLST.tsv serotype.tsv virulence.tsv
+        combine_outputs.py recN.tsv MLST.tsv serotype.tsv virulence.tsv
     """
 }
 
