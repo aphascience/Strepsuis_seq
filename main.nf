@@ -152,4 +152,4 @@ workflow {
         .collectFile(  name: "virulence_table.tsv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}")
         .set { virulence }
     combineoutputs(recN, mlst, serotype, virulence)
-*/}
+}
