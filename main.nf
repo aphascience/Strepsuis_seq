@@ -104,19 +104,24 @@ tag "$pairId"
     """
 }
 
-/*process combineoutputs {
+process combineoutputs {
 tag "combine"
     publishDir "${params.outdir}/CombinedResults", mode: "copy"
 
     input:
-        tuple val(pairId), file("recN_*.txt")
-        tuple val(pairId), file("MLST_*.txt")
-        tuple val(pairId), file("serotype_*.txt")
-        tuple val(pairId), file("virulence_*.txt")
+        file("recN.tsv")
+        file("MLST.tsv")
+        file("serotype_*.tsv")
+        file("virulence_*.tsv")
 
     output:
+        file("Ssuis_typing*.csv")
 
-}*/
+    script:
+    """
+        python3 combine_outputs.py recN.tsv MLST.tsv serotype.tsv virulence.tsv
+    """
+}
 
 workflow {
     Channel
@@ -146,5 +151,5 @@ workflow {
         .map { it[1] }
         .collectFile(  name: "virulence_table.tsv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}")
         .set { virulence }
-    /*combineoutputs(srst2_recN.out, srst2_mlst.out, srst2_serotype.out, srst2_virulence.out)
+    combineoutputs(recN, mlst, serotype, virulence)
 */}
