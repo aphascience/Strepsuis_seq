@@ -63,7 +63,7 @@ tag "$pairId"
         tuple val(pairId), file(trimmed_R1), file(trimmed_R2)
 
     output:
-	    tuple val(pairId), file("MLST_*.txt")	
+	    tuple val(pairId), file("MLST_${pairId}*.txt")
 	
     script:
     """
@@ -79,7 +79,7 @@ tag "$pairId"
         tuple val(pairId), file(trimmed_R1), file(trimmed_R2)
 
     output:
-	    tuple val(pairId), file("serotype_*.txt")	
+	    tuple val(pairId), file("serotype_${pairId}_*.txt"), emit: serotype
 	
     script:
     """
@@ -95,7 +95,8 @@ tag "$pairId"
         tuple val(pairId), file(trimmed_R1), file(trimmed_R2)
 
     output:
-	    tuple val(pairId), file("virulence_*.txt")	
+	    tuple val(pairId), file("virulence_${pairId}*_genes_*.txt"), emit: virulence_genes
+        tuple val(pairId), file("virulence_*_fullgenes_*.txt"), optional: true, emit: virulence_fullgenes
 	
     script:
     """
@@ -103,19 +104,24 @@ tag "$pairId"
     """
 }
 
-/*process combineoutputs {
+process combineoutputs {
 tag "combine"
     publishDir "${params.outdir}/CombinedResults", mode: "copy"
 
     input:
-        tuple val(pairId), file("recN_*.txt")
-        tuple val(pairId), file("MLST_*.txt")
-        tuple val(pairId), file("serotype_*.txt")
-        tuple val(pairId), file("virulence_*.txt")
+        file("recN.tsv")
+        file("MLST.tsv")
+        file("serotype.tsv")
+        file("virulence.tsv")
 
     output:
+        file("*.csv")
 
-}*/
+    script:
+    """
+        combine_outputs.py recN.tsv MLST.tsv serotype.tsv virulence.tsv
+    """
+}
 
 workflow {
     Channel
@@ -130,16 +136,20 @@ workflow {
     srst2_serotype(trim.out)
     srst2_virulence(trim.out)
     srst2_recN.out.recN_genes
-        .collectFile( name: "recN_table.tsv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}")
+        .map { it[1] }
+        .collectFile( name: "recN_table.tsv", sort: true, keepHeader: true, storeDir: "${params.outdir}")
         .set { recN }
-    /*srst2_mlst.out
+    srst2_mlst.out
+        .map { it[1] }
         .collectFile(  name: "mlst_table.tsv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}")
         .set { mlst }
-    srst2_serotype.out
+    srst2_serotype.out.serotype
+        .map { it[1] }
         .collectFile(  name: "serotype_table.tsv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}")
         .set { serotype }
-    srst2_virulence.out
+    srst2_virulence.out.virulence_genes
+        .map { it[1] }
         .collectFile(  name: "virulence_table.tsv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}")
         .set { virulence }
-    /*combineoutputs(srst2_recN.out, srst2_mlst.out, srst2_serotype.out, srst2_virulence.out)
-*/}
+    combineoutputs(recN, mlst, serotype, virulence)
+}
