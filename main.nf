@@ -40,7 +40,7 @@ process pileup {
 
 process srst2_recN {
 tag "$pairId"
-    maxForks 2
+    maxForks 1
     publishDir "${params.outdir}/recN", mode: "copy"
 
     input:
@@ -58,6 +58,7 @@ tag "$pairId"
 
 process srst2_mlst {
 tag "$pairId"
+    errorStrategy 'ignore'
     publishDir "${params.outdir}/MLST", mode: "copy"
 
     input:
