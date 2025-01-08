@@ -3,6 +3,7 @@
 nextflow.enable.dsl=2
 
 process trim {
+    maxForks 5
     tag "$pairId"
     input:
         tuple val(pairId), path(raw1), path(raw2)
@@ -57,6 +58,7 @@ tag "$pairId"
 
 process srst2_mlst {
 tag "$pairId"
+    errorStrategy 'ignore'
     publishDir "${params.outdir}/MLST", mode: "copy"
 
     input:
