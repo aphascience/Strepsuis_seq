@@ -52,7 +52,7 @@ tag "$pairId"
 	
     script:
     """
-    python3 ~/srst2/scripts/srst2.py --input_pe $R1 $R2 --forward _S*_R1_001 --reverse _S*_R2_001 --output recN_$pairId --gene_db $projectDir/assets/recN/Ss-recN.fas --log
+    python3 ~/srst2/scripts/srst2.py --input_pe $R1 $R2 --forward _S.*_R1_001 --reverse _S.*_R2_001 --output recN_$pairId --gene_db $projectDir/assets/recN/Ss-recN.fas --log
     """
 }
 
@@ -68,7 +68,7 @@ tag "$pairId"
 	
     script:
     """
-    python3 ~/srst2/scripts/srst2.py --threads 2 --input_pe $R1 $R2 --forward _S*_R1_001 --reverse _S*_R2_001 --output MLST_$pairId --mlst_db $projectDir/assets/MLST/Ssuis_MLSTalleles.fas --mlst_definitions $projectDir/assets/MLST/Ssuis_Profiles.txt --mlst_delimiter "_" --log
+    python3 ~/srst2/scripts/srst2.py --threads 2 --input_pe $R1 $R2 --forward _S.*_R1_001 --reverse _S.*_R2_001 --output MLST_$pairId --mlst_db $projectDir/assets/MLST/Ssuis_MLSTalleles.fas --mlst_definitions $projectDir/assets/MLST/Ssuis_Profiles.txt --mlst_delimiter "_" --log
     """
 }
 
@@ -85,7 +85,7 @@ tag "$pairId"
 	
     script:
     """
-    python3 ~/srst2/scripts/srst2.py --input_pe $R1 $R2 --forward _S*_R1_001 --reverse _S*_R2_001 --output serotype_$pairId --mlst_db $projectDir/assets/Serotype/Ssuis_serotype.fas --mlst_definitions $projectDir/assets/Serotype/Ssuis_serotype_def.txt --mlst_delimiter "-" --log
+    python3 ~/srst2/scripts/srst2.py --input_pe $R1 $R2 --forward _S.*_R1_001 --reverse _S.*_R2_001 --output serotype_$pairId --mlst_db $projectDir/assets/Serotype/Ssuis_serotype.fas --mlst_definitions $projectDir/assets/Serotype/Ssuis_serotype_def.txt --mlst_delimiter "-" --log
     """
 }
 
@@ -103,7 +103,7 @@ tag "$pairId"
 	
     script:
     """
-    python3 ~/srst2/scripts/srst2.py --input_pe $R1 $R2 --forward _S*_R1_001 --reverse _S*_R2_001 --output virulence_$pairId --gene_db $projectDir/assets/Virulence/Ssuis_virulence.fas --log
+    python3 ~/srst2/scripts/srst2.py --input_pe $R1 $R2 --forward _S.*_R1_001 --reverse _S.*_R2_001 --output virulence_$pairId --gene_db $projectDir/assets/Virulence/Ssuis_virulence.fas --log
     """
 }
 
