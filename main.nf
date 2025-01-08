@@ -2,7 +2,7 @@
 
 nextflow.enable.dsl=2
 
-process trim {
+/* process trim {
     tag "$pairId"
     input:
         tuple val(pairId), path(raw1), path(raw2)
@@ -36,14 +36,15 @@ process pileup {
     pileup.sh map.sam $projectDir/assets/Ss-recN.fas
     """
     
-}
+}*/
 
 process srst2_recN {
 tag "$pairId"
+    maxForks 2
     publishDir "${params.outdir}/recN", mode: "copy"
 
     input:
-        tuple val(pairId), file(trimmed_R1), file(trimmed_R2)
+        tuple val(pairId), file(R1), file(R2)
 
     output:
 	    tuple val(pairId), file("recN_${pairId}*_genes_*.txt"), emit: recN_genes
@@ -51,7 +52,7 @@ tag "$pairId"
 	
     script:
     """
-    python3 ~/srst2/scripts/srst2.py --input_pe $trimmed_R1 $trimmed_R2 --forward _trimmed_R1 --reverse _trimmed_R2 --output recN_$pairId --gene_db $projectDir/assets/recN/Ss-recN.fas --log
+    python3 ~/srst2/scripts/srst2.py --input_pe $R1 $R2 --forward _trimmed_R1 --reverse _trimmed_R2 --output recN_$pairId --gene_db $projectDir/assets/recN/Ss-recN.fas --log
     """
 }
 
@@ -60,39 +61,41 @@ tag "$pairId"
     publishDir "${params.outdir}/MLST", mode: "copy"
 
     input:
-        tuple val(pairId), file(trimmed_R1), file(trimmed_R2)
+        tuple val(pairId), file(R1), file(R2)
 
     output:
 	    tuple val(pairId), file("MLST_${pairId}*.txt")
 	
     script:
     """
-    python3 ~/srst2/scripts/srst2.py --input_pe $trimmed_R1 $trimmed_R2 --forward _trimmed_R1 --reverse _trimmed_R2 --output MLST_$pairId --mlst_db $projectDir/assets/MLST/Ssuis_MLSTalleles.fas --mlst_definitions $projectDir/assets/MLST/Ssuis_Profiles.txt --mlst_delimiter "_" --log
+    python3 ~/srst2/scripts/srst2.py --threads 2 --input_pe $R1 $R2 --forward _trimmed_R1 --reverse _trimmed_R2 --output MLST_$pairId --mlst_db $projectDir/assets/MLST/Ssuis_MLSTalleles.fas --mlst_definitions $projectDir/assets/MLST/Ssuis_Profiles.txt --mlst_delimiter "_" --log
     """
 }
 
 process srst2_serotype {
 tag "$pairId"
+    maxForks 2
     publishDir "${params.outdir}/serotype", mode: "copy"
 
     input:
-        tuple val(pairId), file(trimmed_R1), file(trimmed_R2)
+        tuple val(pairId), file(R1), file(R2)
 
     output:
 	    tuple val(pairId), file("serotype_${pairId}_*.txt"), emit: serotype
 	
     script:
     """
-    python3 ~/srst2/scripts/srst2.py --input_pe $trimmed_R1 $trimmed_R2 --forward _trimmed_R1 --reverse _trimmed_R2 --output serotype_$pairId --mlst_db $projectDir/assets/Serotype/Ssuis_serotype.fas --mlst_definitions $projectDir/assets/Serotype/Ssuis_serotype_def.txt --mlst_delimiter "-" --log
+    python3 ~/srst2/scripts/srst2.py --input_pe $R1 $R2 --forward _trimmed_R1 --reverse _trimmed_R2 --output serotype_$pairId --mlst_db $projectDir/assets/Serotype/Ssuis_serotype.fas --mlst_definitions $projectDir/assets/Serotype/Ssuis_serotype_def.txt --mlst_delimiter "-" --log
     """
 }
 
 process srst2_virulence {
 tag "$pairId"
+    maxForks 2
     publishDir "${params.outdir}/virulence", mode: "copy"
 
     input:
-        tuple val(pairId), file(trimmed_R1), file(trimmed_R2)
+        tuple val(pairId), file(R1), file(R2)
 
     output:
 	    tuple val(pairId), file("virulence_${pairId}*_genes_*.txt"), emit: virulence_genes
@@ -100,7 +103,7 @@ tag "$pairId"
 	
     script:
     """
-    python3 ~/srst2/scripts/srst2.py --input_pe $trimmed_R1 $trimmed_R2 --forward _trimmed_R1 --reverse _trimmed_R2 --output virulence_$pairId --gene_db $projectDir/assets/Virulence/Ssuis_virulence.fas --log
+    python3 ~/srst2/scripts/srst2.py --input_pe $R1 $R2 --forward _trimmed_R1 --reverse _trimmed_R2 --output virulence_$pairId --gene_db $projectDir/assets/Virulence/Ssuis_virulence.fas --log
     """
 }
 
@@ -129,12 +132,12 @@ workflow {
             .ifEmpty { error "Cannot find any reads matching: ${params.reads}" }
             .set { readPairs }
 
-    trim(readPairs)
+    //trim(readPairs)
 
-    srst2_recN(trim.out)
-    srst2_mlst(trim.out)
-    srst2_serotype(trim.out)
-    srst2_virulence(trim.out)
+    srst2_recN(readPairs)
+    srst2_mlst(readPairs)
+    srst2_serotype(readPairs)
+    srst2_virulence(readPairs)
     srst2_recN.out.recN_genes
         .map { it[1] }
         .collectFile( name: "recN_table.tsv", sort: true, keepHeader: true, storeDir: "${params.outdir}")
