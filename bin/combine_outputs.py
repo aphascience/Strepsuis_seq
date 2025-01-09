@@ -26,6 +26,7 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable):
     # read serotype data
     serotype_df = pd.read_table(serotypeTable, sep='\t')
     serotype_df['Sample'] = serotype_df['Sample'].astype(object)
+    serotype_df.rename({'ST': 'Serotype'}, axis=1, inplace=True)
 
     # read virulence data
     virulence_df = pd.read_table(virulenceTable, sep='\t', names=list(range(4)), skiprows=1)
@@ -62,8 +63,6 @@ if __name__ == '__main__':
     parser.add_argument('serotypeTable', help='...............')
     parser.add_argument('virulenceTable', help='................')
     # parser.add_argument('commitId', help='Nextflow capture of git commit')
-    # parser.add_argument('--read_threshold', type=int, default=500, help='threshold for number of M.bovis reads')
-    # parser.add_argument('--abundance_threshold', type=int, default=1, help='threshold for M.bovis abundance')
 
     args = parser.parse_args()
 
