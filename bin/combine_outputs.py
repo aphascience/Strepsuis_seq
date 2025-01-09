@@ -21,7 +21,9 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable):
 
     # read MLST data
     MLST_df = pd.read_table(MLSTTable, sep='\t')
-    MLST_df['Sample'] = MLST_df['Sample'].astype(object)
+    print(MLST_df)
+    MLST_df[['Sample', 'ST', 'aroA', 'cpn60', 'dpr', 'gki', 'mutS', 'recA', 'thrA']] = \
+        MLST_df[['Sample', 'ST', 'aroA', 'cpn60', 'dpr', 'gki', 'mutS', 'recA', 'thrA']].astype(object)
 
     # read serotype data
     serotype_df = pd.read_table(serotypeTable, sep='\t')
