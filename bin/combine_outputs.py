@@ -12,7 +12,6 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable):
     recN_df = pd.read_table(recNTable, sep='\t')
     recN_df['Sample'] = recN_df['Sample'].astype(object)
     recN_df['recN-Pos'].fillna('Not Ssuis', inplace=True)
-    print(recN_df)
 
     # read MLST data
     MLST_df = pd.read_table(MLSTTable, sep='\t')
@@ -21,7 +20,6 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable):
     # read serotype data
     serotype_df = pd.read_table(serotypeTable, sep='\t')
     serotype_df['Sample'] = serotype_df['Sample'].astype(object)
-    print(serotype_df)
 
     # read virulence data
     virulence_df = pd.read_table(virulenceTable, sep='\t', names=list(range(4)), skiprows=1)
@@ -33,7 +31,6 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable):
     virulence_df['sly'] = (virulence_df[1].str.contains('sly')) | (virulence_df[2].str.contains('sly')) | \
         (virulence_df[3].str.contains('sly'))
     virulence_df = virulence_df[['Sample', 'epf', 'mrp', 'sly']]
-    print(virulence_df)
 
     # Merge dataframes
     sero_mlst_df = pd.merge(serotype_df, MLST_df, on='Sample', how='left')
@@ -42,7 +39,6 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable):
                            sero_mlst_df, on='Sample', how='outer')
     finalout_df.set_index('Sample', inplace=True)
     finalout_df.sort_index(inplace=True)
-    print(finalout_df)
 
     # Write to csv
     finalout_df.to_csv("FinalOut.csv")
