@@ -34,7 +34,7 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable):
     print(virulence_df)
 
     # Merge dataframes
-    sero_mlst_df = pd.merge(MLST_df, serotype_df, on='Sample', how='left')
+    sero_mlst_df = pd.merge(serotype_df, MLST_df on='Sample', how='left')
 
     finalout_df = pd.merge(pd.merge(recN_df, virulence_df, on='Sample', how='left'), sero_mlst_df, on='Sample', how='outer')
     finalout_df.set_index('Sample', inplace=True)
