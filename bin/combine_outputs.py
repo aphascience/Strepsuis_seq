@@ -4,10 +4,16 @@
 
 import pandas as pd
 import argparse
-from datetime import datetime, date
+import getpass
+from datetime import date
 
 
 def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable):
+
+    # Get info for logging
+    date_out = date.today().strftime('%d%b%y')
+    user = getpass.getuser()
+
     # read recN data
     recN_df = pd.read_table(recNTable, sep='\t')
     recN_df['Sample'] = recN_df['Sample'].astype(object)
@@ -41,7 +47,12 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable):
     finalout_df.sort_index(inplace=True)
 
     # Write to csv
-    finalout_df.to_csv("FinalOut.csv")
+    finalout_df.to_csv("FinalOut_{}.csv".format(date_out))
+
+    # Append log info
+    with open("FinalOut_{}.csv".format(date_out), "a") as outFile:
+        outFile.write("# Operator: " + user)
+        outFile.close
 
 
 if __name__ == '__main__':
