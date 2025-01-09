@@ -25,23 +25,26 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable):
 
     # read virulence data
     virulence_df = pd.read_table(virulenceTable, sep='\t', names=list(range(4)), skiprows=1)
-    virulence_df.rename({0 : 'Sample'}, axis=1, inplace=True)
+    virulence_df.rename({0: 'Sample'}, axis=1, inplace=True)
     virulence_df.fillna('-', inplace=True)
     virulence_df['epf'] = virulence_df[1].str.contains('epf')
-    virulence_df['mrp'] = (virulence_df[1].str.contains('mrp')) | (virulence_df[2].str.contains('mrp')) | (virulence_df[3].str.contains('mrp'))
-    virulence_df['sly'] = (virulence_df[1].str.contains('sly')) | (virulence_df[2].str.contains('sly')) | (virulence_df[3].str.contains('sly'))
+    virulence_df['mrp'] = (virulence_df[1].str.contains('mrp')) | (virulence_df[2].str.contains('mrp')) | \
+        (virulence_df[3].str.contains('mrp'))
+    virulence_df['sly'] = (virulence_df[1].str.contains('sly')) | (virulence_df[2].str.contains('sly')) | \
+        (virulence_df[3].str.contains('sly'))
     virulence_df = virulence_df[['Sample', 'epf', 'mrp', 'sly']]
     print(virulence_df)
 
     # Merge dataframes
-    sero_mlst_df = pd.merge(serotype_df, MLST_df on='Sample', how='left')
+    sero_mlst_df = pd.merge(serotype_df, MLST_df, on='Sample', how='left')
 
-    finalout_df = pd.merge(pd.merge(recN_df, virulence_df, on='Sample', how='left'), sero_mlst_df, on='Sample', how='outer')
+    finalout_df = pd.merge(pd.merge(recN_df, virulence_df, on='Sample', how='left'),
+                           sero_mlst_df, on='Sample', how='outer')
     finalout_df.set_index('Sample', inplace=True)
     finalout_df.sort_index(inplace=True)
     print(finalout_df)
 
-    #Write to csv
+    # Write to csv
     finalout_df.to_csv("FinalOut.csv")
 
 
@@ -51,9 +54,9 @@ if __name__ == '__main__':
     parser.add_argument('MLSTTable', help='............')
     parser.add_argument('serotypeTable', help='...............')
     parser.add_argument('virulenceTable', help='................')
-    #parser.add_argument('commitId', help='Nextflow capture of git commit')
-    #parser.add_argument('--read_threshold', type=int, default=500, help='threshold for number of M.bovis reads')
-    #parser.add_argument('--abundance_threshold', type=int, default=1, help='threshold for M.bovis abundance')
+    # parser.add_argument('commitId', help='Nextflow capture of git commit')
+    # parser.add_argument('--read_threshold', type=int, default=500, help='threshold for number of M.bovis reads')
+    # parser.add_argument('--abundance_threshold', type=int, default=1, help='threshold for M.bovis abundance')
 
     args = parser.parse_args()
 
