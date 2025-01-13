@@ -82,11 +82,12 @@ tag "$pairId"
         tuple val(pairId), file(R1), file(R2)
 
     output:
-	    tuple val(pairId), file("serotype_${pairId}_*.txt"), emit: serotype
-	
+	    tuple val(pairId), file("serotype_${pairId}_*.txt"), emit: serotype_results
+        tuple val(pairId), env(serotype), emit: srst2_sero
     script:
     """
-    python3 ~/srst2/scripts/srst2.py --input_pe $R1 $R2 --forward _S.*_R1_001 --reverse _S.*_R2_001 --output serotype_$pairId --mlst_db $projectDir/assets/Serotype/Ssuis_serotype.fas --mlst_definitions $projectDir/assets/Serotype/Ssuis_serotype_def.txt --mlst_delimiter "-" --log
+    serotype.sh $R1 $R2 $pairId ${params.sero_db} ${params.sero_def}
+    serotype=\$(awk 'FNR == 2 {print \$2}' *_serotype__results.txt)
     """
 }
 
@@ -108,6 +109,21 @@ tag "$pairId"
     """
 }
 
+process verifySerotype {
+    tag "$pairId"
+    publishDir "${params.outdir}/serotype", mode: "copy"
+    input:
+        tuple val(pairId), val(serotype), file(R1), file(R2)
+
+    output:
+        tuple val(pairId), file("*.pileup"), file("*.csv"), optional: true
+
+    script:
+    """
+    seroVerify.sh $projectDir/assets/Serotype/cps2K $R1 $R2 $pairId $serotype
+    """
+}
+
 process combineoutputs {
 tag "combine"
     publishDir "${params.outdir}/CombinedResults", mode: "copy"
@@ -117,13 +133,14 @@ tag "combine"
         file("MLST.tsv")
         file("serotype.tsv")
         file("virulence.tsv")
+        file("verify.csv")
 
     output:
         file("*.csv")
 
     script:
     """
-        combine_outputs.py recN.tsv MLST.tsv serotype.tsv virulence.tsv
+        combine_outputs.py recN.tsv MLST.tsv serotype.tsv virulence.tsv verify.csv
     """
 }
 
@@ -139,21 +156,29 @@ workflow {
     srst2_mlst(readPairs)
     srst2_serotype(readPairs)
     srst2_virulence(readPairs)
+    srst2_serotype.out.srst2_sero
+        .join( readPairs )
+        .set { verify_reads }
+    verifySerotype(verify_reads)
     srst2_recN.out.recN_genes
         .map { it[1] }
-        .collectFile( name: "recN_table.tsv", sort: true, keepHeader: true, storeDir: "${params.outdir}")
+        .collectFile( name: "recN_table.tsv", sort: true, keepHeader: true, storeDir: "${params.outdir}" )
         .set { recN }
     srst2_mlst.out
         .map { it[1] }
-        .collectFile(  name: "mlst_table.tsv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}")
+        .collectFile( name: "mlst_table.tsv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}" )
         .set { mlst }
-    srst2_serotype.out.serotype
+    srst2_serotype.out.serotype_results
         .map { it[1] }
-        .collectFile(  name: "serotype_table.tsv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}")
+        .collectFile( name: "serotype_table.tsv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}" )
         .set { serotype }
     srst2_virulence.out.virulence_genes
         .map { it[1] }
-        .collectFile(  name: "virulence_table.tsv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}")
+        .collectFile( name: "virulence_table.tsv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}" )
         .set { virulence }
-    combineoutputs(recN, mlst, serotype, virulence)
+    verifySerotype.out
+        .map { it[1] }
+        .collectFile( name: "verification.csv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}" )
+        .set { verify }
+    combineoutputs(recN, mlst, serotype, virulence, verify)
 }
