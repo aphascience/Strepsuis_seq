@@ -69,7 +69,7 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV):
     virulence_df = virulence_df[['Sample', 'epf', 'mrp', 'sly']]
 
     # Merge dataframes
-    sero_mlst_df = pd.merge(serotype_df, MLST_df, on='Sample', how='left')
+    sero_mlst_df = pd.merge(verified_serotype_df, MLST_df, on='Sample', how='left')
 
     finalout_df = pd.merge(pd.merge(recN_df, sero_mlst_df, on='Sample', how='left'),
                            virulence_df, on='Sample', how='outer')
