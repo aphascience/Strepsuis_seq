@@ -3,12 +3,13 @@
 # Combine outputs from all four srst2 runs to generate a single results file in csv format
 
 import pandas as pd
+import numpy as np
 import argparse
 import getpass
 from datetime import date
 
 
-def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable):
+def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV):
 
     # Get info for logging
     date_out = date.today().strftime('%d%b%y')
@@ -21,7 +22,6 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable):
 
     # read MLST data
     MLST_df = pd.read_table(MLSTTable, sep='\t')
-    print(MLST_df)
     MLST_df[['Sample', 'ST', 'aroA', 'cpn60', 'dpr', 'gki', 'mutS', 'recA', 'thrA']] = \
         MLST_df[['Sample', 'ST', 'aroA', 'cpn60', 'dpr', 'gki', 'mutS', 'recA', 'thrA']].astype(object)
 
@@ -29,6 +29,33 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable):
     serotype_df = pd.read_table(serotypeTable, sep='\t')
     serotype_df['Sample'] = serotype_df['Sample'].astype(object)
     serotype_df.rename({'ST': 'Serotype'}, axis=1, inplace=True)
+
+    # read serotype verification
+    verify_df = pd.read_csv(verifyCSV)
+    verify_df['Sample'] = verify_df['Sample'].astype(object)
+
+    # update serotypes based on verification
+    verified_serotype_df = pd.merge(serotype_df, verify_df, on='Sample', how='left')
+    # Quote from https://rdcu.be/d56Ee:
+    # "The analysis revealed that all serotype 2 and all serotype 14 strains had a G nucleotide at position 483 of the
+    # cpsK gene, while all serotype 1 and all serotype 1/2 strains contained either a C or T at that nucleotide position." 
+    # if prelim serotype is 1 and base 483 is G, then Serotype is 14
+    # if prelim serotype is 1 and base 483 is C or T, then Serotype is 1
+    # if prelim serotype is 2 and base 483 is G, then Serotype is 2
+    # if prelim serotype is 1 and base 483 is C or T, then Serotype is 1/2
+
+    conditions = [
+        verified_serotype_df['Serotype'] == '1' & verified_serotype_df['Pos483'] == 'G',
+        verified_serotype_df['Serotype'] == '1' & verified_serotype_df['Pos483'] == 'C',
+        verified_serotype_df['Serotype'] == '1' & verified_serotype_df['Pos483'] == 'T',
+        verified_serotype_df['Serotype'] == '2' & verified_serotype_df['Pos483'] == 'G',
+        verified_serotype_df['Serotype'] == '2' & verified_serotype_df['Pos483'] == 'C',
+        verified_serotype_df['Serotype'] == '2' & verified_serotype_df['Pos483'] == 'T'
+    ]
+
+    results = ['14', '1', '1', '2', '1/2', '1/2']
+
+    verified_serotype_df['Serotype'] = np.select(conditions, results)
 
     # read virulence data
     virulence_df = pd.read_table(virulenceTable, sep='\t', names=list(range(4)), skiprows=1)
@@ -64,6 +91,7 @@ if __name__ == '__main__':
     parser.add_argument('MLSTTable', help='............')
     parser.add_argument('serotypeTable', help='...............')
     parser.add_argument('virulenceTable', help='................')
+    parser.add_argument('verifyCSV', help='................')
     # parser.add_argument('commitId', help='Nextflow capture of git commit')
 
     args = parser.parse_args()
