@@ -16,9 +16,11 @@ if [[ "$serotype" == "2\*" || "$serotype" == "1*" || "$serotype" == "1*?" || "$s
     # create vcf for cps2K
     samtools mpileup -Bf $index.fas sorted.bam -o "$sample"_cps2K.pileup 
 
-    base483=$(grep 483 "$sample"_cps2K.pileup | awk '{print $5}' | grep -o -iE 'A|T|C|G|-' | sort | uniq -ic)
+    verifyevidence=$(grep 483 "$sample"_cps2K.pileup | awk '{print $5}' | grep -o -iE 'A|T|C|G|-' | sort | uniq -ic)
+    base483=($verifyevidence)
 
-    echo "$sample","$base483" > "$sample"_seroVerify.csv
+    echo "Sample,Pos483,Count" > "$sample"_seroVerify.csv
+    echo "$sample","${base483[1]}",${base483[0]} >> "$sample"_seroVerify.csv
 
 else
     echo "Verification not required"
