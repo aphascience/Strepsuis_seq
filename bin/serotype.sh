@@ -10,7 +10,3 @@ def=$5
 
 python3 ~/srst2/scripts/srst2.py --input_pe $R1 $R2 --forward _S.*_R1_001 --reverse _S.*_R2_001 \
     --output serotype_$sample --mlst_db $db --mlst_definitions $def --mlst_delimiter "-" --log
-
-serotype=$(awk 'FNR == 2 {print $2}' *_serotype__results.txt) 
-
-echo $serotype
