@@ -37,8 +37,9 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV):
     # update serotypes based on verification
     verified_serotype_df = pd.merge(serotype_df, verify_df, on='Sample', how='left')
     # Quote from https://rdcu.be/d56Ee:
-    # "The analysis revealed that all serotype 2 and all serotype 14 strains had a G nucleotide at position 483 of the
-    # cpsK gene, while all serotype 1 and all serotype 1/2 strains contained either a C or T at that nucleotide position." 
+    # ## "The analysis revealed that all serotype 2 and all serotype 14 strains had a G nucleotide at position 483 of
+    # ## the cpsK gene, while all serotype 1 and all serotype 1/2 strains contained either a C or T at that nucleotide
+    # ## position."
     # if prelim serotype is 1 and base 483 is G, then Serotype is 14
     # if prelim serotype is 1 and base 483 is C or T, then Serotype is 1
     # if prelim serotype is 2 and base 483 is G, then Serotype is 2
