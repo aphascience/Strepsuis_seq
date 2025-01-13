@@ -20,7 +20,7 @@ if [[ "$serotype" == "1" || "$serotype" == "1*" || "$serotype" == "1*?" || "$ser
     ref483=$(grep -w 483 "$sample"_cps2K.vcf | awk '{print $4}')
     alt483=$(grep -w 483 "$sample"_cps2K.vcf | awk '{print $5}')
     evidence=$(grep -w 483 "$sample"_cps2K.vcf | awk '{print $8}' | awk -F ';' '{print $5}' | awk -F '=' '{print $2}')
-    if $alt483='.'; then
+    if [ $alt483 = '.' ]; then
         base483=$ref483
     else
         base483=$alt483
