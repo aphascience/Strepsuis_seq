@@ -29,16 +29,15 @@ RUN apt-get install --yes --no-install-recommends \
     liblzma-dev \
     libbz2-dev \
     libcurl4-openssl-dev \
-    bowtie2 \
-    samtools
+    bowtie2
 
 ################## INSTALL DEPENDENCIES ###################
 
 WORKDIR /home/tools
 
 ## install trimming tool
-RUN wget https://sourceforge.net/projects/bbmap/files/BBMap_39.11.tar.gz --no-check-certificate && \
-    tar -xvzf BBMap_39.11.tar.gz && rm -f BBMap_39.11.tar.gz
+# RUN wget https://sourceforge.net/projects/bbmap/files/BBMap_39.11.tar.gz --no-check-certificate && \
+#    tar -xvzf BBMap_39.11.tar.gz && rm -f BBMap_39.11.tar.gz
 
 ENV PATH="$PATH:/home/tools/bbmap"
 
