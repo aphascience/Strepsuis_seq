@@ -29,6 +29,7 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV):
     serotype_df = pd.read_table(serotypeTable, sep='\t')
     serotype_df['Sample'] = serotype_df['Sample'].astype(object)
     serotype_df.rename({'ST': 'Serotype'}, axis=1, inplace=True)
+    serotype_df['Serotype'] = serotype_df['Serotype'].str.replace(r'\D', '', regex=True)
 
     # read serotype verification
     verify_df = pd.read_csv(verifyCSV)
@@ -46,12 +47,12 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV):
     # if prelim serotype is 1 and base 483 is C or T, then Serotype is 1/2
 
     conditions = [
-        verified_serotype_df['Serotype'] == '1' & verified_serotype_df['Pos483'] == 'G',
-        verified_serotype_df['Serotype'] == '1' & verified_serotype_df['Pos483'] == 'C',
-        verified_serotype_df['Serotype'] == '1' & verified_serotype_df['Pos483'] == 'T',
-        verified_serotype_df['Serotype'] == '2' & verified_serotype_df['Pos483'] == 'G',
-        verified_serotype_df['Serotype'] == '2' & verified_serotype_df['Pos483'] == 'C',
-        verified_serotype_df['Serotype'] == '2' & verified_serotype_df['Pos483'] == 'T'
+        (verified_serotype_df['Serotype'] == '1') & (verified_serotype_df['Pos483'] == 'G'),
+        (verified_serotype_df['Serotype'] == '1') & (verified_serotype_df['Pos483'] == 'C'),
+        (verified_serotype_df['Serotype'] == '1') & (verified_serotype_df['Pos483'] == 'T'),
+        (verified_serotype_df['Serotype'] == '2') & (verified_serotype_df['Pos483'] == 'G'),
+        (verified_serotype_df['Serotype'] == '2') & (verified_serotype_df['Pos483'] == 'C'),
+        (verified_serotype_df['Serotype'] == '2') & (verified_serotype_df['Pos483'] == 'T')
     ]
 
     results = ['14', '1', '1', '2', '1/2', '1/2']
