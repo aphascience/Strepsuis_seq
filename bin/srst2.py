@@ -1046,7 +1046,7 @@ def get_samtools_exec():
         return "samtools"
 
 
-# HACK-2: assume use of samtools v1.x as checking not functioning
+# HACK-2: assume use of samtools 0.1.18 as checking not functioning
 def get_pileup(
     args, mapping_files_pre, raw_bowtie_sam, bowtie_sam_mod, fasta, pileup_file
 ):
@@ -1074,18 +1074,10 @@ def get_pileup(
     # if samtools_v1:
     # if args.threads > 1:
     # sort_command += ['-@', str(args.threads)]
-    temp = mapping_files_pre + ".sort_temp"
-    sort_command += [
-        "-o",
-        out_file_bam_sorted + ".bam",
-        "-O",
-        "bam",
-        "-T",
-        temp,
-        out_file_bam,
-    ]
+    # temp = mapping_files_pre + ".sort_temp"
+    # sort_command += ["-o", out_file_bam_sorted + ".bam", "-O", "bam", "-T", temp, out_file_bam]
     # else:  # samtools 0.x
-    # sort_command += [out_file_bam, out_file_bam_sorted]
+    sort_command += [out_file_bam, out_file_bam_sorted]
     run_command(sort_command)
 
     # Delete interim files (sam, modified sam, unsorted bam) unless otherwise specified.
