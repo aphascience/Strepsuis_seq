@@ -52,7 +52,7 @@ tag "$pairId"
 	
     script:
     """
-    python3 ~/srst2/scripts/srst2.py --input_pe $R1 $R2 --forward _S.*_R1_001 --reverse _S.*_R2_001 --output recN_$pairId --gene_db $projectDir/assets/recN/Ss-recN.fas --log
+    srst2.py --input_pe $R1 $R2 --forward _S.*_R1_001 --reverse _S.*_R2_001 --output recN_$pairId --gene_db ${params.recN_ref} --log
     """
 }
 
@@ -69,7 +69,7 @@ tag "$pairId"
 	
     script:
     """
-    python3 ~/srst2/scripts/srst2.py --threads 2 --input_pe $R1 $R2 --forward _S.*_R1_001 --reverse _S.*_R2_001 --output MLST_$pairId --mlst_db $projectDir/assets/MLST/Ssuis_MLSTalleles.fas --mlst_definitions $projectDir/assets/MLST/Ssuis_Profiles.txt --mlst_delimiter "_" --log
+    srst2.py --input_pe $R1 $R2 --forward _S.*_R1_001 --reverse _S.*_R2_001 --output MLST_$pairId --mlst_db ${params.mlst_db} --mlst_definitions ${params.mlst_def} --mlst_delimiter "_" --log
     """
 }
 
@@ -105,7 +105,7 @@ tag "$pairId"
 	
     script:
     """
-    python3 ~/srst2/scripts/srst2.py --input_pe $R1 $R2 --forward _S.*_R1_001 --reverse _S.*_R2_001 --output virulence_$pairId --gene_db $projectDir/assets/Virulence/Ssuis_virulence.fas --log
+    srst2.py --input_pe $R1 $R2 --forward _S.*_R1_001 --reverse _S.*_R2_001 --output virulence_$pairId --gene_db ${params.virulence_ref} --log
     """
 }
 
@@ -116,11 +116,11 @@ process verifySerotype {
         tuple val(pairId), val(serotype), file(R1), file(R2)
 
     output:
-        tuple val(pairId), file("*.pileup"), file("*.csv"), optional: true
+        tuple val(pairId), file("*.csv"), optional: true
 
     script:
     """
-    seroVerify.sh $projectDir/assets/Serotype/cps2K $R1 $R2 $pairId $serotype
+    seroVerify.sh ${params.cps_ref} $R1 $R2 $pairId $serotype
     """
 }
 
