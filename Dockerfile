@@ -44,13 +44,14 @@ WORKDIR /home/tools
 ## install samtools-0.1.18
 RUN wget https://sourceforge.net/projects/samtools/files/samtools/0.1.18/samtools-0.1.18.tar.bz2 --no-check-certificate && \
     tar -xjvf samtools-0.1.18.tar.bz2 && rm -f samtools-0.1.18.tar.bz2 && \
-    cd samtools-01.18/ && make && cd ..
+    cd samtools-0.1.18/ && make && cd ..
 
 ENV PATH="$PATH:/home/tools/samtools-0.1.18/"
+ENV PATH="$PATH:/home/tools/samtools-0.1.18/bcftools/"
 
 ## install srst2 (updated for python3 compatibility)
-RUN git clone https://github.com/APHA-CSU/srst2-py3.git
+# RUN git clone https://github.com/APHA-CSU/srst2-py3.git
 
-ENV PATH="$PATH:/home/tools/srst2-py3/scripts/"
+# ENV PATH="$PATH:/home/tools/srst2-py3/scripts/"
 
 WORKDIR /home
