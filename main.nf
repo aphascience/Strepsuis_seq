@@ -116,7 +116,7 @@ process verifySerotype {
         tuple val(pairId), val(serotype), file(R1), file(R2)
 
     output:
-        tuple val(pairId), file("*.pileup"), file("*.csv"), optional: true
+        tuple val(pairId), file("*.csv"), optional: true
 
     script:
     """
