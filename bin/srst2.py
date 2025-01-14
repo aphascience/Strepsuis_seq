@@ -187,7 +187,7 @@ def parse_args():
     parser.add_argument(
         "--other",
         type=str,
-        help='Other arguments to pass to bowtie2 (must be escaped, e.g. "\--no-mixed".',
+        help='Other arguments to pass to bowtie2 must be escaped',
         required=False,
     )
 
@@ -210,7 +210,7 @@ def parse_args():
     parser.add_argument(
         "--samtools_args",
         type=str,
-        help='Other arguments to pass to samtools mpileup (must be escaped, e.g. "\-A").',
+        help='Other arguments to pass to samtools mpileup must be escaped.',
         required=False,
     )
 
