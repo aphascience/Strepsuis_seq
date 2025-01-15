@@ -3,7 +3,6 @@
 # Combine outputs from all four srst2 runs to generate a single results file in csv format
 
 import pandas as pd
-import numpy as np
 import argparse
 import getpass
 from datetime import date
@@ -33,7 +32,8 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV):
 
     # read serotype verification
     verify_df = pd.read_csv(verifyCSV)
-    verify_df['Sample'] = verify_df['Sample'].astype(object)
+    verify_df[['Sample', 'Pos483', 'RefF', 'RefR', 'AltF', 'AltR']] = \
+        verify_df[['Sample', 'Pos483', 'RefF', 'RefR', 'AltF', 'AltR']].astype(object)
 
     # update serotypes based on verification
     verified_serotype_df = pd.merge(serotype_df, verify_df, on='Sample', how='left')
@@ -46,18 +46,20 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV):
     # if prelim serotype is 2 and base 483 is G, then Serotype is 2
     # if prelim serotype is 1 and base 483 is C or T, then Serotype is 1/2
 
-    conditions = [
-        (verified_serotype_df['Serotype'] == '1') & (verified_serotype_df['Pos483'] == 'G'),
-        (verified_serotype_df['Serotype'] == '1') & (verified_serotype_df['Pos483'] == 'C'),
-        (verified_serotype_df['Serotype'] == '1') & (verified_serotype_df['Pos483'] == 'T'),
-        (verified_serotype_df['Serotype'] == '2') & (verified_serotype_df['Pos483'] == 'G'),
-        (verified_serotype_df['Serotype'] == '2') & (verified_serotype_df['Pos483'] == 'C'),
-        (verified_serotype_df['Serotype'] == '2') & (verified_serotype_df['Pos483'] == 'T')
-    ]
-
-    results = ['14', '1', '1', '2', '1/2', '1/2']
-
-    verified_serotype_df['Serotype'] = np.select(conditions, results)
+    verified_serotype_df.loc[(verified_serotype_df['Serotype'] == '1') & (verified_serotype_df['Pos483'] == 'G'),
+                             'Serotype'] = '14'
+    verified_serotype_df.loc[(verified_serotype_df['Serotype'] == '1') & (verified_serotype_df['Pos483'] == 'C'),
+                             'Serotype'] = '1'
+    verified_serotype_df.loc[(verified_serotype_df['Serotype'] == '1') & (verified_serotype_df['Pos483'] == 'T'),
+                             'Serotype'] = '1'
+    verified_serotype_df.loc[(verified_serotype_df['Serotype'] == '2') & (verified_serotype_df['Pos483'] == 'G'),
+                             'Serotype'] = '2'
+    verified_serotype_df.loc[(verified_serotype_df['Serotype'] == '2') & (verified_serotype_df['Pos483'] == 'C'),
+                             'Serotype'] = '1/2'
+    verified_serotype_df.loc[(verified_serotype_df['Serotype'] == '2') & (verified_serotype_df['Pos483'] == 'T'),
+                             'Serotype'] = '1/2'
+    verified_serotype_df.loc[(verified_serotype_df['Serotype'] != '1') & (verified_serotype_df['Serotype'] != '2'),
+                             'Serotype'] = verified_serotype_df['Serotype']
 
     # read virulence data
     virulence_df = pd.read_table(virulenceTable, sep='\t', names=list(range(4)), skiprows=1)
