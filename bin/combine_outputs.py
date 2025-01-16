@@ -44,7 +44,7 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV):
     # if prelim serotype is 1 and base 483 is G, then Serotype is 14
     # if prelim serotype is 1 and base 483 is C or T, then Serotype is 1
     # if prelim serotype is 2 and base 483 is G, then Serotype is 2
-    # if prelim serotype is 1 and base 483 is C or T, then Serotype is 1/2
+    # if prelim serotype is 2 and base 483 is C or T, then Serotype is 1/2
 
     verified_serotype_df.loc[(verified_serotype_df['Serotype'] == '1') & (verified_serotype_df['Pos483'] == 'G'),
                              'Serotype'] = '14'
