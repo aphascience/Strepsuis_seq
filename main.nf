@@ -40,6 +40,7 @@ process pileup {
 
 process srst2_recN {
 tag "$pairId"
+    errorStrategy 'ignore'
     maxForks 1
     publishDir "${params.outdir}/recN", mode: "copy"
 
