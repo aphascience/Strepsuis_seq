@@ -75,6 +75,7 @@ tag "$pairId"
 
 process srst2_serotype {
 tag "$pairId"
+    errorStrategy 'ignore'
     maxForks 2
     publishDir "${params.outdir}/serotype", mode: "copy"
 
@@ -93,6 +94,7 @@ tag "$pairId"
 
 process srst2_virulence {
 tag "$pairId"
+    errorStrategy 'ignore'
     maxForks 2
     publishDir "${params.outdir}/virulence", mode: "copy"
 
