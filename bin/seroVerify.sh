@@ -11,10 +11,10 @@ serotype=$5
 if [[ "$serotype" == "1" || "$serotype" == "1*" || "$serotype" == "1*?" || "$serotype" == "2" || "$serotype" == "2*" || "$serotype" == "2*?" ]]; then
     # map to cps2K
     bowtie2 -x $index -1 $read1 -2 $read2 -a --very-sensitive-local --no-unal |
-        ~/biotools/samtools-0.1.18/samtools view -S1 - | ~/biotools/samtools-0.1.18/samtools sort - sorted
+        samtools view -S1 - | samtools sort - sorted
 
     # create vcf for cps2K
-    ~/biotools/samtools-0.1.18/samtools mpileup -DBuf $index.fas sorted.bam | ~/biotools/samtools-0.1.18/bcftools/bcftools view -c - > "$sample"_cps2K.vcf 
+    samtools mpileup -DBuf $index.fas sorted.bam | bcftools view -c - > "$sample"_cps2K.vcf 
 
     # extract basecall and  evidence from vcf
     ref483=$(grep -w 483 "$sample"_cps2K.vcf | awk '{print $4}')
