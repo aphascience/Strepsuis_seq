@@ -83,7 +83,6 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV):
 
     # Append log info
     with open("FinalOut_{}.csv".format(date_out), "a") as outFile:
-        #outFile.write("# Operator: " + user)
         outFile.close
 
 
