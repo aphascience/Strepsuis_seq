@@ -414,7 +414,7 @@ def modify_bowtie_sam(raw_bowtie_sam, max_mismatch, max_unaligned_overlap):
                     left_unali > max_unaligned_overlap
                     or right_unali > max_unaligned_overlap
                 ):
-                    # logging.debug("Excluding read - too long unaligned end overlapping reference: {}".format(line))
+                    logging.debug("Excluding read - too long unaligned end overlapping reference: {}".format(line))
                     continue
                 flag = int(fields[1])
                 flag = (flag - 256) if (flag & 256) else flag
