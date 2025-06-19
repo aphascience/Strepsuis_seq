@@ -4,7 +4,6 @@
 
 import pandas as pd
 import argparse
-import getpass
 from datetime import date
 
 
@@ -12,12 +11,11 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV):
 
     # Get info for logging
     date_out = date.today().strftime('%d%b%y')
-    user = getpass.getuser()
 
     # read recN data
     recN_df = pd.read_table(recNTable, sep='\t')
     recN_df['Sample'] = recN_df['Sample'].astype(object)
-    recN_df['recN-Pos'].fillna('Not Ssuis', inplace=True)
+    recN_df['recN-Pos'].fillna('noRecN', inplace=True)
 
     # read MLST data
     MLST_df = pd.read_table(MLSTTable, sep='\t')
@@ -85,7 +83,7 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV):
 
     # Append log info
     with open("FinalOut_{}.csv".format(date_out), "a") as outFile:
-        outFile.write("# Operator: " + user)
+        #outFile.write("# Operator: " + user)
         outFile.close
 
 
