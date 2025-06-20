@@ -148,7 +148,7 @@ tag "combine"
 
     script:
     """
-        combine_outputs.py recN.tsv MLST.tsv serotype.tsv virulence.tsv verify.csv
+        combine_outputs.py recN.tsv MLST.tsv serotype.tsv virulence.tsv verify.csv ${params.dataDir}
     """
 }
 

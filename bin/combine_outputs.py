@@ -7,7 +7,7 @@ import argparse
 from datetime import date
 
 
-def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV):
+def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, dataDir):
 
     # Get info for logging
     date_out = date.today().strftime('%d%b%y')
@@ -81,10 +81,10 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV):
     finalout_df.sort_index(inplace=True)
 
     # Write to csv
-    finalout_df.to_csv("FinalOut_{}.csv".format(date_out))
+    finalout_df.to_csv("{}_FinalOut_{}.csv".format(dataDir, date_out))
 
     # Append log info
-    with open("FinalOut_{}.csv".format(date_out), "a") as outFile:
+    with open("{}_FinalOut_{}.csv".format(date_out), "a") as outFile:
         outFile.close
 
 
@@ -95,6 +95,7 @@ if __name__ == '__main__':
     parser.add_argument('serotypeTable', help='...............')
     parser.add_argument('virulenceTable', help='................')
     parser.add_argument('verifyCSV', help='................')
+    parser.add_argument('dataDir', help='.............')
     # parser.add_argument('commitId', help='Nextflow capture of git commit')
 
     args = parser.parse_args()
