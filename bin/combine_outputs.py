@@ -76,6 +76,8 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV):
     finalout_df = pd.merge(pd.merge(recN_df, sero_mlst_df, on='Sample', how='outer'),
                            virulence_df, on='Sample', how='outer')
     finalout_df.set_index('Sample', inplace=True)
+    finalout_df['Serotype'].fillna('Undetermined', inplace=True)
+    finalout_df[['epf', 'mrp', 'sly']] = finalout_df[['epf', 'mrp', 'sly']].fillna('FALSE')
     finalout_df.sort_index(inplace=True)
 
     # Write to csv
