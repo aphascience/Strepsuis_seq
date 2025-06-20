@@ -1057,8 +1057,8 @@ def get_pileup(
     logging.info("Generate and sort BAM file...")
     out_file_bam = mapping_files_pre + ".unsorted.bam"
     view_command = [samtools_exec, "view"]
-    if args.threads > 1:  # and samtools_v1:
-        view_command += ["-@", str(args.threads)]
+    #if args.threads > 1:  # and samtools_v1:
+    #    view_command += ["-@", str(args.threads)]
     view_command += [
         "-b",
         "-o",
