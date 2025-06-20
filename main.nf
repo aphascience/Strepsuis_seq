@@ -73,7 +73,7 @@ tag "$pairId"
     """
     srst2.py --input_pe $R1 $R2 --forward _S.*_R1_001 --reverse _S.*_R2_001 --output MLST_$pairId\
              --mlst_db ${params.mlst_db} --mlst_definitions ${params.mlst_def} --mlst_delimiter "_"\
-             --max_unaligned_overlap 75 --log
+             --max_unaligned_overlap 75 --threads 2 --log
     """
 }
 
@@ -112,7 +112,8 @@ tag "$pairId"
     script:
     """
     srst2.py --input_pe $R1 $R2 --forward _S.*_R1_001 --reverse _S.*_R2_001 --output virulence_$pairId\
-             --gene_db ${params.virulence_ref} --max_unaligned_overlap 75 --log
+             --gene_db ${params.virulence_ref} --max_unaligned_overlap 75 --log\
+             || true
     """
 }
 
