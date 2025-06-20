@@ -76,16 +76,24 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
     finalout_df = pd.merge(pd.merge(recN_df, sero_mlst_df, on='Sample', how='outer'),
                            virulence_df, on='Sample', how='outer')
     finalout_df.set_index('Sample', inplace=True)
+
+    # Add additional infomation, missing values, flags for lower quality data and sort
     finalout_df['Serotype'].fillna('Undetermined', inplace=True)
     finalout_df[['epf', 'mrp', 'sly']] = finalout_df[['epf', 'mrp', 'sly']].fillna('FALSE')
+    finalout_df.loc[(finalout_df['depth_x'] < '10') | (finalout_df['depth_x'] < '10'), 'QualFlag'] \
+                    = 'InsufficentData'
+    finalout_df.loc[(finalout_df['depth_x'] < '15') | (finalout_df['depth_x'] < '15'), 'QualFlag'] \
+                    = 'LowDepth'
+    qualcol = finalout_df.pop('QualFlag')
+    finalout_df.insert(1, 'QualFlag', qualcol)
     finalout_df.sort_index(inplace=True)
 
     # Write to csv
     finalout_df.to_csv("{}_FinalOut_{}.csv".format(dataDir, date_out))
 
     # Append log info
-    with open("{}_FinalOut_{}.csv".format(date_out), "a") as outFile:
-        outFile.close
+    # with open("{}_FinalOut_{}.csv".format(date_out), "a") as outFile:
+    #    outFile.close
 
 
 if __name__ == '__main__':
