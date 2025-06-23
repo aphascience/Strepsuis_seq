@@ -53,9 +53,9 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
     verified_serotype_df.loc[(verified_serotype_df['Serotype'] == '2') & (verified_serotype_df['Pos483'] == 'G'),
                              'Serotype'] = '2'
     verified_serotype_df.loc[(verified_serotype_df['Serotype'] == '2') & (verified_serotype_df['Pos483'] == 'C'),
-                             'Serotype'] = '1/2'
+                             'Serotype'] = "'1/2"
     verified_serotype_df.loc[(verified_serotype_df['Serotype'] == '2') & (verified_serotype_df['Pos483'] == 'T'),
-                             'Serotype'] = '1/2'
+                             'Serotype'] = "'1/2"
     verified_serotype_df.loc[(verified_serotype_df['Serotype'] != '1') & (verified_serotype_df['Serotype'] != '2'),
                              'Serotype'] = verified_serotype_df['Serotype']
 
@@ -80,12 +80,13 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
     # Add additional infomation, missing values, flags for lower quality data and sort
     finalout_df['Serotype'].fillna('Undetermined', inplace=True)
     finalout_df[['epf', 'mrp', 'sly']] = finalout_df[['epf', 'mrp', 'sly']].fillna('FALSE')
-    finalout_df.loc[(finalout_df['depth_x'] < '10') | (finalout_df['depth_x'] < '10'), 'QualFlag'] \
-                    = 'InsufficentData'
-    finalout_df.loc[(finalout_df['depth_x'] < '15') | (finalout_df['depth_x'] < '15'), 'QualFlag'] \
+    finalout_df.loc[(finalout_df['depth_x'] < 15.0) | (finalout_df['depth_x'] < 15.0), 'QualFlag'] \
                     = 'LowDepth'
+    finalout_df.loc[(finalout_df['depth_x'] < 10.0) | (finalout_df['depth_x'] < 10.0), 'QualFlag'] \
+                    = 'InsufficentData'
+    finalout_df['QualFlag'].replace('nan', '', inplace=True)
     qualcol = finalout_df.pop('QualFlag')
-    finalout_df.insert(1, 'QualFlag', qualcol)
+    finalout_df.insert(0, 'QualFlag', qualcol)
     finalout_df.sort_index(inplace=True)
 
     # Write to csv
