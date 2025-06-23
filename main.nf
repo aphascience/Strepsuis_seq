@@ -88,12 +88,12 @@ tag "$pairId"
 
     output:
 	    tuple val(pairId), file("serotype_${pairId}_*.txt"), emit: serotype_results
-        tuple val(pairId), val(serotype), emit: srst2_sero
+        tuple val(pairId), env(serotype), emit: srst2_sero
     
     script:
     """
     serotype.sh $R1 $R2 $pairId ${params.sero_db} ${params.sero_def}
-    serotype = "$(awk 'FNR == 2 {print \$2}' *_serotype__results.txt)"
+    serotype=\$(awk 'FNR == 2 {print \$2}' *_serotype__results.txt)
     """
 }
 
