@@ -414,7 +414,7 @@ def modify_bowtie_sam(raw_bowtie_sam, max_mismatch, max_unaligned_overlap):
                     left_unali > max_unaligned_overlap
                     or right_unali > max_unaligned_overlap
                 ):
-                    # logging.debug("Excluding read - too long unaligned end overlapping reference: {}".format(line))
+                    logging.debug("Excluding read - too long unaligned end overlapping reference: {}".format(line))
                     continue
                 flag = int(fields[1])
                 flag = (flag - 256) if (flag & 256) else flag
@@ -1057,8 +1057,8 @@ def get_pileup(
     logging.info("Generate and sort BAM file...")
     out_file_bam = mapping_files_pre + ".unsorted.bam"
     view_command = [samtools_exec, "view"]
-    if args.threads > 1:  # and samtools_v1:
-        view_command += ["-@", str(args.threads)]
+    #if args.threads > 1:  # and samtools_v1:
+    #    view_command += ["-@", str(args.threads)]
     view_command += [
         "-b",
         "-o",

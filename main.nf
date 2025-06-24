@@ -40,6 +40,7 @@ process pileup {
 
 process srst2_recN {
 tag "$pairId"
+    errorStrategy 'ignore'
     maxForks 1
     publishDir "${params.outdir}/recN", mode: "copy"
 
@@ -52,7 +53,8 @@ tag "$pairId"
 	
     script:
     """
-    srst2.py --input_pe $R1 $R2 --forward _S.*_R1_001 --reverse _S.*_R2_001 --output recN_$pairId --gene_db ${params.recN_ref} --log
+    srst2.py --input_pe $R1 $R2 --forward _S.*_R1_001 --reverse _S.*_R2_001 --output recN_$pairId\
+             --gene_db ${params.recN_ref} --max_unaligned_overlap 75 --log
     """
 }
 
@@ -69,12 +71,15 @@ tag "$pairId"
 	
     script:
     """
-    srst2.py --input_pe $R1 $R2 --forward _S.*_R1_001 --reverse _S.*_R2_001 --output MLST_$pairId --mlst_db ${params.mlst_db} --mlst_definitions ${params.mlst_def} --mlst_delimiter "_" --log
+    srst2.py --input_pe $R1 $R2 --forward _S.*_R1_001 --reverse _S.*_R2_001 --output MLST_$pairId\
+             --mlst_db ${params.mlst_db} --mlst_definitions ${params.mlst_def} --mlst_delimiter "_"\
+             --max_unaligned_overlap 75 --threads 2 --log
     """
 }
 
 process srst2_serotype {
 tag "$pairId"
+    errorStrategy 'ignore'
     maxForks 2
     publishDir "${params.outdir}/serotype", mode: "copy"
 
@@ -84,6 +89,7 @@ tag "$pairId"
     output:
 	    tuple val(pairId), file("serotype_${pairId}_*.txt"), emit: serotype_results
         tuple val(pairId), env(serotype), emit: srst2_sero
+    
     script:
     """
     serotype.sh $R1 $R2 $pairId ${params.sero_db} ${params.sero_def}
@@ -93,6 +99,7 @@ tag "$pairId"
 
 process srst2_virulence {
 tag "$pairId"
+    errorStrategy 'ignore'
     maxForks 2
     publishDir "${params.outdir}/virulence", mode: "copy"
 
@@ -105,7 +112,9 @@ tag "$pairId"
 	
     script:
     """
-    srst2.py --input_pe $R1 $R2 --forward _S.*_R1_001 --reverse _S.*_R2_001 --output virulence_$pairId --gene_db ${params.virulence_ref} --log
+    srst2.py --input_pe $R1 $R2 --forward _S.*_R1_001 --reverse _S.*_R2_001 --output virulence_$pairId\
+             --gene_db ${params.virulence_ref} --max_unaligned_overlap 75 --log\
+             || true
     """
 }
 
@@ -140,7 +149,7 @@ tag "combine"
 
     script:
     """
-        combine_outputs.py recN.tsv MLST.tsv serotype.tsv virulence.tsv verify.csv
+        combine_outputs.py recN.tsv MLST.tsv serotype.tsv virulence.tsv verify.csv ${params.dataDir}
     """
 }
 

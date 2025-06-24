@@ -4,20 +4,18 @@
 
 import pandas as pd
 import argparse
-import getpass
 from datetime import date
 
 
-def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV):
+def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, dataDir):
 
     # Get info for logging
     date_out = date.today().strftime('%d%b%y')
-    user = getpass.getuser()
 
     # read recN data
     recN_df = pd.read_table(recNTable, sep='\t')
     recN_df['Sample'] = recN_df['Sample'].astype(object)
-    recN_df['recN-Pos'].fillna('Not Ssuis', inplace=True)
+    recN_df['recN-Pos'].fillna('noRecN', inplace=True)
 
     # read MLST data
     MLST_df = pd.read_table(MLSTTable, sep='\t')
@@ -55,9 +53,9 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV):
     verified_serotype_df.loc[(verified_serotype_df['Serotype'] == '2') & (verified_serotype_df['Pos483'] == 'G'),
                              'Serotype'] = '2'
     verified_serotype_df.loc[(verified_serotype_df['Serotype'] == '2') & (verified_serotype_df['Pos483'] == 'C'),
-                             'Serotype'] = '1/2'
+                             'Serotype'] = "'1/2"
     verified_serotype_df.loc[(verified_serotype_df['Serotype'] == '2') & (verified_serotype_df['Pos483'] == 'T'),
-                             'Serotype'] = '1/2'
+                             'Serotype'] = "'1/2"
     verified_serotype_df.loc[(verified_serotype_df['Serotype'] != '1') & (verified_serotype_df['Serotype'] != '2'),
                              'Serotype'] = verified_serotype_df['Serotype']
 
@@ -73,20 +71,30 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV):
     virulence_df = virulence_df[['Sample', 'epf', 'mrp', 'sly']]
 
     # Merge dataframes
-    sero_mlst_df = pd.merge(verified_serotype_df, MLST_df, on='Sample', how='left')
+    sero_mlst_df = pd.merge(verified_serotype_df, MLST_df, on='Sample', how='outer')
 
-    finalout_df = pd.merge(pd.merge(recN_df, sero_mlst_df, on='Sample', how='left'),
+    finalout_df = pd.merge(pd.merge(recN_df, sero_mlst_df, on='Sample', how='outer'),
                            virulence_df, on='Sample', how='outer')
     finalout_df.set_index('Sample', inplace=True)
+
+    # Add additional infomation, missing values, flags for lower quality data and sort
+    finalout_df['Serotype'].fillna('Undetermined', inplace=True)
+    finalout_df[['epf', 'mrp', 'sly']] = finalout_df[['epf', 'mrp', 'sly']].fillna('FALSE')
+    finalout_df.loc[(finalout_df['depth_x'] < 15.0) | (finalout_df['depth_x'] < 15.0), 'QualFlag'] \
+                    = 'LowDepth'
+    finalout_df.loc[(finalout_df['depth_x'] < 10.0) | (finalout_df['depth_x'] < 10.0), 'QualFlag'] \
+                    = 'InsufficentData'
+    finalout_df['QualFlag'].replace('nan', '', inplace=True)
+    qualcol = finalout_df.pop('QualFlag')
+    finalout_df.insert(0, 'QualFlag', qualcol)
     finalout_df.sort_index(inplace=True)
 
     # Write to csv
-    finalout_df.to_csv("FinalOut_{}.csv".format(date_out))
+    finalout_df.to_csv("{}_FinalOut_{}.csv".format(dataDir, date_out))
 
     # Append log info
-    with open("FinalOut_{}.csv".format(date_out), "a") as outFile:
-        outFile.write("# Operator: " + user)
-        outFile.close
+    # with open("{}_FinalOut_{}.csv".format(date_out), "a") as outFile:
+    #    outFile.close
 
 
 if __name__ == '__main__':
@@ -96,6 +104,7 @@ if __name__ == '__main__':
     parser.add_argument('serotypeTable', help='...............')
     parser.add_argument('virulenceTable', help='................')
     parser.add_argument('verifyCSV', help='................')
+    parser.add_argument('dataDir', help='.............')
     # parser.add_argument('commitId', help='Nextflow capture of git commit')
 
     args = parser.parse_args()
