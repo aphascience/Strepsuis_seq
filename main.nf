@@ -2,42 +2,6 @@
 
 nextflow.enable.dsl=2
 
-/* process trim {
-    tag "$pairId"
-    input:
-        tuple val(pairId), path(raw1), path(raw2)
-    output:
-        tuple val(pairId), path("*_trimmed_R1.fastq.gz"), path("*_trimmed_R2.fastq.gz")
-    script:
-    """
-    trim.sh $pairId $raw1 $raw2 ${params.adapters}
-    """
-}
-
-process bowtie_map {
-    tag "$pairId"
-    input:
-        tuple val(pairId), path("*_trimmed_R1.fastq.gz"), path("*_trimmed_R2.fastq")
-        path($projectDir/assets/Ss-recN)
-    output:
-        tuple val(pairId), path("map.sam")
-    """
-    bowtie_map.sh trimmed_R1.fastq.gz trimmed_R2.fastq.gz $projectDir/assets/Ss-recN
-    """
-}
-
-process pileup {
-    tag "$pairId"
-    input:
-        tuple val(pairId), path("map.sam")
-    output:
-        tuple val(pairId), path(output.pileup)
-    """
-    pileup.sh map.sam $projectDir/assets/Ss-recN.fas
-    """
-    
-}*/
-
 process srst2_recN {
 tag "$pairId"
     errorStrategy 'ignore'
