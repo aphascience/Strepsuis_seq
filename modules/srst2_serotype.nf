@@ -1,5 +1,5 @@
 process SRST2_SEROTYPE {
-tag "$pairId"
+    tag "$pairId"
     errorStrategy 'ignore'
     maxForks 2
     publishDir "${params.outdir}/serotype", mode: "copy"
