@@ -1,4 +1,4 @@
-process srst2_serotype {
+process SRST2_SEROTYPE {
 tag "$pairId"
     errorStrategy 'ignore'
     maxForks 2
