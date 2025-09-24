@@ -26,6 +26,7 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
     serotype_df = pd.read_table(serotypeTable, sep='\t')
     serotype_df['Sample'] = serotype_df['Sample'].astype(object)
     serotype_df.rename({'ST': 'Serotype'}, axis=1, inplace=True)
+    serotype_df['Serotype'] = serotype_df['Serotype'].astype(str)
     serotype_df['Serotype'] = serotype_df['Serotype'].str.replace(r'\D', '', regex=True)
 
     # read serotype verification
