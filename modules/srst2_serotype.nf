@@ -9,7 +9,7 @@ process SRST2_SEROTYPE {
 
     output:
 	    tuple val(pairId), file("serotype_${pairId}_*.txt"), emit: serotype_results
-        tuple val(pairId), env(serotype), emit: srst2_sero
+        tuple val(pairId), env('seroID'), emit: srst2_sero
     
     script:
     """
@@ -17,6 +17,6 @@ process SRST2_SEROTYPE {
              --output serotype_$pairId --mlst_db ${params.sero_db} --mlst_definitions ${params.sero_def}\
              --mlst_delimiter "-" --max_unaligned_overlap 75 --min_coverage 60 --max_divergence 20 --log
 
-    serotype=\$(awk 'FNR == 2 {print \$2}' *_serotype__results.txt)
+    seroID=\$(awk 'FNR == 2 {print \$2}' *_serotype__results.txt)
     """
 }
