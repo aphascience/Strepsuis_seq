@@ -1,0 +1,37 @@
+{
+    "Should map reads to virulence reference": {
+        "content": [
+            {
+                "0": [
+                    [
+                        "test",
+                        "virulence_test__genes__Ssuis_virulence__results.txt:md5,8622c9ba45892102cd2167ea78176c35"
+                    ]
+                ],
+                "1": [
+                    [
+                        "test",
+                        "virulence_test__fullgenes__Ssuis_virulence__results.txt:md5,84cce8e3f3842ba464bcbd603664276c"
+                    ]
+                ],
+                "virulence_fullgenes": [
+                    [
+                        "test",
+                        "virulence_test__fullgenes__Ssuis_virulence__results.txt:md5,84cce8e3f3842ba464bcbd603664276c"
+                    ]
+                ],
+                "virulence_genes": [
+                    [
+                        "test",
+                        "virulence_test__genes__Ssuis_virulence__results.txt:md5,8622c9ba45892102cd2167ea78176c35"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.7"
+        },
+        "timestamp": "2025-09-24T10:25:50.934829178"
+    }
+}

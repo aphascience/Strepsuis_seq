@@ -1,0 +1,19 @@
+{
+    "Should verify serotype against know SNPs": {
+        "content": [
+            {
+                "0": [
+                    [
+                        "test",
+                        "test_seroVerify.csv:md5,48f85ad9fd39b56feb35b1008e604ab9"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.7"
+        },
+        "timestamp": "2025-09-24T14:26:18.654919608"
+    }
+}

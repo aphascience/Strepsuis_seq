@@ -1,0 +1,19 @@
+{
+    "Should map reads to mlst reference": {
+        "content": [
+            {
+                "0": [
+                    [
+                        "test",
+                        "MLST_test__mlst__Ssuis_MLSTalleles__results.txt:md5,5f3b501c2ebc5d6c8650fd9766d54ec6"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.7"
+        },
+        "timestamp": "2025-09-24T11:27:49.481176292"
+    }
+}
