@@ -1,0 +1,19 @@
+name: Strepsuis_seq Docker build and CI test
+on: [pull_request]
+jobs:
+  Build:
+    runs-on: self-hosted
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Docker build
+        run: docker build -t ${{ secrets.CSU_ACCOUNT_NUMBER }}.dkr.ecr.eu-west-1.amazonaws.com/gitrun-csu-1016:${{ github.head_ref }} .
+      - name: ECR Login
+        run: |
+          sudo aws ecr get-login-password --region eu-west-1 | sudo docker login --username AWS --password-stdin ${{ secrets.CSU_ACCOUNT_NUMBER }}.dkr.ecr.eu-west-1.amazonaws.com
+      #- name: ECR Tag
+        #run: |
+        #  sudo docker tag gitrun-csu-1016:latest ${{ secrets.CSU_ACCOUNT_NUMBER }}.dkr.ecr.eu-west-1.amazonaws.com/gitrun-csu-1016:latest
+      - name: ECR Push
+        run: |
+          sudo docker push ${{ secrets.CSU_ACCOUNT_NUMBER }}.dkr.ecr.eu-west-1.amazonaws.com/gitrun-csu-1016:${{ github.head_ref }}
